@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>💑Madhumitha weds Mugesh💘💕</title>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Indie+Flower&family=Pacifico&display=swap">
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+        }
+        canvas {
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: -1;
+        }
+        .invitation {
+            font-family: 'Pacifico', cursive;
+            color: #333;
+            text-align: center;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1;
+        }
+        .invitation h1 {
+            font-family: 'Indie Flower', cursive;
+            font-size: 4rem;
+            margin-bottom: 10px;
+        }
+        .counter {
+            font-family: 'Arial', sans-serif;
+            color: #333333;
+            font-size: 1rem;
+            margin-top: 20px;
+        }
+        .venue-link {
+            font-family: 'Arial', sans-serif;
+            color: #008cff;
+            font-size: 1.2rem;
+            margin-top: 10px;
+            text-decoration: underline
+        }
+        .venue-link:hover {
+            text-decoration: underline;
+        }
+        .download-button {
+            font-family: 'Arial', sans-serif;
+            color: #fff;
+            background-color: #4CAF50;
+            display: inline-block;
+            font-size: 1.2rem;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 4px;
+        }
+        .download-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="flowerCanvas"></canvas>
+        <div class="invitation">
+            <h1>Madhumitha weds Mugesh</h1>
+            <p>
+                We are delighted to invite you to our Reception on October 26th,
+                followed by marriage on October 27th. Please grace us with your
+                blessings and good wishes. Your presence will add warmth to our day!!!
+            </p>
+            <div class="counter" id="counter"></div>
+            <a class="venue-link" href="https://maps.app.goo.gl/UyBZKU1Rbn1AxsrX9" target="_blank">Venue</a>
+            <div>
+                <a class="download-btn" href="E:\Documents\mugesh_wedding\invitation.mp4" download>Download Invitation</a>
+            </div>
+                <!-- Add the audio element -->
+            <audio id="backgroundAudio" loop>
+                <source src="E:\Documents\mugesh_wedding\KavalaRingtone.mp3" type="audio/mpeg">
+                Your browser does not support the audio element.
+            </audio>
+        </div>
+    <script>
+        const canvas = document.getElementById('flowerCanvas');
+        const ctx = canvas.getContext('2d');
+        let flowers = [];
+        let flowerImages = [];
+        let flowerTopLeft, flowerTopRight;
+
+        const flowerSources = [
+            'fl1.png',
+            'fl2.png',
+            'fl3.png',
+            'fl4.png',
+            // Add more image sources as needed
+        ];
+
+        function Flower(x, y) {
+            this.x = x;
+            this.y = y;
+            this.radius = Math.random() * 5 + 2;
+            this.velocityY = Math.random() * 2 + 1;
+            this.scale = 1;
+            this.image = flowerImages[Math.floor(Math.random() * flowerImages.length)];
+        }
+
+        function createFlowerShower() {
+            const x = Math.random() * canvas.width;
+            const y = -10;
+            flowers.push(new Flower(x, y));
+        }
+
+        function loadFlowerImages() {
+            let loadedImages = 0;
+
+            flowerSources.forEach((source) => {
+                const flowerImage = new Image();
+                flowerImage.src = source;
+                flowerImage.onload = function () {
+                    loadedImages++;
+                    if (loadedImages === flowerSources.length) {
+                        flowerImages = flowerSources.map((source) => {
+                            const image = new Image();
+                            image.src = source;
+                            return image;
+                        });
+
+                        flowerTopLeft = new Image();
+                        flowerTopLeft.src = 'ftl.png';
+                        flowerTopLeft.onload = function () {
+                            flowerTopRight = new Image();
+                            flowerTopRight.src = 'ftr.png';
+                            flowerTopRight.onload = function () {
+                                setInterval(createFlowerShower, 100);
+                                animateFlowers();
+                            };
+                        };
+                    }
+                };
+            });
+        }
+
+        function animateFlowers() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw flowers at top left and top right corners with increased size
+            ctx.drawImage(flowerTopLeft, 10, 10, 100, 100);
+            ctx.drawImage(flowerTopRight, canvas.width - 110, 10, 100, 100);
+
+            flowers.forEach((flower, index) => {
+                if (flower.y > canvas.height) {
+                    flowers.splice(index, 1);
+                } else {
+                    flower.y += flower.velocityY;
+                    flower.scale += 0.005;
+                    ctx.drawImage(
+                        flower.image,
+                        flower.x - flower.radius * flower.scale,
+                        flower.y - flower.radius * flower.scale,
+                        flower.radius * 2 * flower.scale,
+                        flower.radius * 2 * flower.scale
+                    );
+                }
+            });
+
+            requestAnimationFrame(animateFlowers);
+        }
+
+        canvas.width = window.innerWidth;
+        canvas.height = window.innerHeight;
+
+        window.addEventListener('resize', function () {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        });
+
+        // JavaScript to calculate and update the counter
+        function updateCounter() {
+            const targetDate = new Date('2023-10-26T00:00:00');
+            const currentDate = new Date();
+            const timeDifference = targetDate - currentDate;
+            if (timeDifference <= 0) {
+                document.getElementById('counter').textContent = 'The big day has arrived!';
+            } else {
+                const days = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
+                const hours = Math.floor((timeDifference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                const minutes = Math.floor((timeDifference % (1000 * 60 * 60)) / (1000 * 60));
+                const seconds = Math.floor((timeDifference % (1000 * 60)) / 1000);
+                document.getElementById('counter').textContent = `Days Remining: ${days} days, ${hours} hours, ${minutes} minutes, ${seconds} seconds`;
+            }
+        }
+
+                // Play audio on click anywhere on the UI
+        document.body.addEventListener('click', function () {
+            const audio = document.getElementById('backgroundAudio');
+            audio.play();
+        });
+
+        setInterval(updateCounter, 1000); // Update the counter every second
+
+        loadFlowerImages();
+    </script>
+</body>
+</html>
